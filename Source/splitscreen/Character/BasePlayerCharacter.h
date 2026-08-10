@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Core/Component Ledger/CoreInterface.h"
 #include "BasePlayerCharacter.generated.h"
 
 class UInputAction;
 struct FInputActionValue;
 
 UCLASS()
-class SPLITSCREEN_API ABasePlayerCharacter : public ACharacter
+class SPLITSCREEN_API ABasePlayerCharacter : public ACharacter, public ICoreInterface
 {
 	GENERATED_BODY()
 
@@ -21,6 +22,9 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	UPROPERTY(VisibleAnywhere)
+	UComponentLedger* ComponentLedger;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	UInputAction* MoveInputAction;
@@ -61,4 +65,6 @@ protected:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnMoveAction(FVector2D MoveInput, FVector MoveVector);
+
+	UComponentLedger* GetComponentLedger() override;
 };

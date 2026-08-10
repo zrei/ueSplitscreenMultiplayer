@@ -10,6 +10,7 @@ ABasePlayerCharacter::ABasePlayerCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	this->ComponentLedger = this->CreateDefaultSubobject<UComponentLedger>(TEXT("Component Ledger"));
 }
 
 // Called when the game starts or when spawned
@@ -51,4 +52,8 @@ void ABasePlayerCharacter::MoveAction(const FInputActionValue& MoveValue)
 	CurrMoveVector.Normalize();
 	AddMovementInput(CurrMoveVector);
 	OnMoveAction(CurrMoveInput, CurrMoveVector);
+}
+
+UComponentLedger* ABasePlayerCharacter::GetComponentLedger() {
+	return this->ComponentLedger;
 }
