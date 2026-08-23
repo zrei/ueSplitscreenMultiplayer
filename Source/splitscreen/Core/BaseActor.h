@@ -21,7 +21,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(VisibleAnywhere)
-	UComponentLedger* ComponentLedger;
+	TObjectPtr<UComponentLedger> ComponentLedger;
 
 	UComponentLedger* GetComponentLedger() override;
 

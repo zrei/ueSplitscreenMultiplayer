@@ -9,6 +9,8 @@
 
 class UInputAction;
 struct FInputActionValue;
+class UPlayerMovementComponent;
+class UPlayerCameraControllerComponent;
 
 UCLASS()
 class SPLITSCREEN_API ABasePlayerCharacter : public ACharacter, public ICoreInterface
@@ -24,28 +26,25 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(VisibleAnywhere)
-	UComponentLedger* ComponentLedger;
+	TObjectPtr<UComponentLedger> ComponentLedger;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	UInputAction* MoveInputAction;
+	TObjectPtr<UInputAction> MoveInputAction;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	UInputAction* LookInputAction;
+	TObjectPtr<UInputAction> LookInputAction;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	float MoveSpeed;
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UPlayerMovementComponent> PlayerMovementComponent;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	float LookSpeed;
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UPlayerCameraControllerComponent> PlayerCameraControllerComponent;
 
 	UPROPERTY(BlueprintReadOnly)
 	FVector2D CurrLookInput;
 
 	UPROPERTY(BlueprintReadOnly)
 	FVector2D CurrMoveInput;
-
-	UPROPERTY(BlueprintReadOnly)
-	FVector CurrMoveVector;
 
 public:	
 	// Called every frame
@@ -60,11 +59,5 @@ private:
 	void MoveAction(const FInputActionValue& MoveValue);
 
 protected:
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnLookAction(FVector2D lookVector);
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnMoveAction(FVector2D MoveInput, FVector MoveVector);
-
 	UComponentLedger* GetComponentLedger() override;
 };

@@ -20,7 +20,7 @@ public:
 
 protected:
 	UPROPERTY(VisibleAnywhere)
-	UComponentLedger* ComponentLedger;
+	TObjectPtr<UComponentLedger> ComponentLedger;
 
 	UComponentLedger* GetComponentLedger() override;
 };
