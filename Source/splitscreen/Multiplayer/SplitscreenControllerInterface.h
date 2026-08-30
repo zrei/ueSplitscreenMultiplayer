@@ -22,5 +22,5 @@ class SPLITSCREEN_API ISplitscreenControllerInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual void ToggleSplitscreen(bool ToggleOn, float TransitionTime = 0) PURE_VIRTUAL(ISplitscreenControllerInterface::ToggleSplitscreen, );
+	virtual void ToggleSplitscreen(bool ToggleOn) PURE_VIRTUAL(ISplitscreenControllerInterface::ToggleSplitscreen, );
 };

@@ -18,13 +18,13 @@ class SPLITSCREEN_API ULogger : public UBlueprintFunctionLibrary
 
 public:
 	UFUNCTION(BlueprintCallable)
-	static void LogErrorToScreen(const FString& DisplayString, float TimeToDisplay, int Key = -1);
+	static void LogErrorToScreen(const FString& DisplayString, float TimeToDisplay = 5, int Key = -1);
 
 	UFUNCTION(BlueprintCallable)
-	static void LogNoticeToScreen(const FString& DisplayString, float TimeToDisplay, int Key = -1);
+	static void LogNoticeToScreen(const FString& DisplayString, float TimeToDisplay = 5, int Key = -1);
 
 	UFUNCTION(BlueprintCallable)
-	static void LogWarningToScreen(const FString& DisplayString, float TimeToDisplay, int Key = -1);
+	static void LogWarningToScreen(const FString& DisplayString, float TimeToDisplay = 5, int Key = -1);
 
 private:
 	static const FColor ErrorColor;

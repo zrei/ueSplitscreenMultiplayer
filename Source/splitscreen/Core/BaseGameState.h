@@ -7,8 +7,6 @@
 #include "Component Ledger/CoreInterface.h"
 #include "BaseGameState.generated.h"
 
-class USplitscreenController;
-
 /**
  * 
  */
@@ -25,7 +23,4 @@ protected:
 	TObjectPtr<UComponentLedger> ComponentLedger;
 
 	UComponentLedger* GetComponentLedger() override;
-
-	UPROPERTY(VisibleAnywhere)
-	USplitscreenController* SplitscreenControllerComponent;
 };
