@@ -9,44 +9,36 @@
 #include "EnhancedInputSubsystems.h"
 #include "UserSettings/EnhancedInputUserSettings.h"
 
-void UInputControllerComponent::Init() {
+#define NO_POSSESSED_PAWN_RETURN if (!this->ControllerHasPossessedPlayer) { ULogger::LogErrorToScreen(TEXT("Controller does not have possessed pawn")); return; }
+
+UInputControllerComponent::UInputControllerComponent() {
 	AActor* Owner = this->GetOwner();
 
 	if (!Owner)
 		return;
 
 	ControllerRef = Cast<APlayerController>(Owner);
-	
-	if (!ControllerRef) {
-		LOG_ERROR_AND_RETURN_VOID(TEXT("Input Controller Component"), TEXT("Cannot find controller ref!"));
-	}
 
+	CHECK_POINTER_IF_NULL_LOG_ERRROR_AND_RETURN_VOID(this->ControllerRef, TEXT("Input Controller Component"), TEXT("Cannot find controller ref!"))
+
+	ControllerRef->OnPossessedPawnChanged.AddDynamic(this, &UInputControllerComponent::OnControllerPossessedPawnChanged);
+}
+
+void UInputControllerComponent::InitForNewPawn() {
 	ULocalPlayer* LocalPlayer = ControllerRef->GetLocalPlayer();
 
-	if (!LocalPlayer) {
-		LOG_ERROR_AND_RETURN_VOID(TEXT("Input Controller Component"), TEXT("Cannot find local player!"));
-	}
+	CHECK_POINTER_IF_NULL_LOG_ERRROR_AND_RETURN_VOID(LocalPlayer, TEXT("Input Controller Component"), TEXT("Cannot find local player!"))
 
-	InputSubsystemRef = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(ControllerRef->GetLocalPlayer());
+	InputSubsystemRef = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(LocalPlayer);
 
-	if (!InputSubsystemRef) {
-		LOG_ERROR_AND_RETURN_VOID(TEXT("Input Controller Component"), TEXT("Cannot find input subsystem ref!"));
-	}
+	CHECK_POINTER_IF_NULL_LOG_ERRROR_AND_RETURN_VOID(InputSubsystemRef, TEXT("Input Controller Component"), TEXT("Cannot find input subsystem ref!"))
 
-	/*
-	InputUserSettingsRef = InputSubsystemRef->GetUserSettings();
-
-	if (!InputUserSettingsRef) {
-		LOG_ERROR_AND_RETURN_VOID(TEXT("Input Controller Component"), TEXT("Cannot find input user settings ref!"));
-	}
-	*/
-
-	//InputUserSettingsRef->RegisterInputMappingContext(GameInputMap);
-
-	SwitchToGameInput();
+	this->SwitchToGameInput();
 }
 
 void UInputControllerComponent::SwitchToUIInput(UWidget* InWidgetToFocus, EMouseLockMode InMouseLockMode) {
+	NO_POSSESSED_PAWN_RETURN
+
 	FInputModeUIOnly InputMode;
 	InputMode.SetLockMouseToViewportBehavior(InMouseLockMode);
 
@@ -62,6 +54,8 @@ void UInputControllerComponent::SwitchToUIInput(UWidget* InWidgetToFocus, EMouse
 }
 
 void UInputControllerComponent::SwitchToGameInput() {
+	NO_POSSESSED_PAWN_RETURN
+
 	FInputModeGameOnly InputMode;
 	ControllerRef->SetInputMode(InputMode);
 
@@ -83,4 +77,42 @@ void UInputControllerComponent::SwitchToGameInputMap() {
 #if !UE_BUILD_SHIPPING
 	InputSubsystemRef->AddMappingContext(DebugInputMap, 0);
 #endif
+}
+
+UEnhancedInputUserSettings* UInputControllerComponent::GetUserInputSettings() {
+	NO_POSSESSED_PAWN_RETURN
+
+	if (this->InputUserSettingsRef)
+		return this->InputUserSettingsRef;
+
+	CHECK_POINTER_IF_NULL_LOG_ERROR_AND_RETURN_NULL(this->InputSubsystemRef, TEXT("Input Controller Component"), TEXT("No input subsystem ref to pull user input settings from"))
+
+	this->InputUserSettingsRef = InputSubsystemRef->GetUserSettings();
+
+	CHECK_POINTER_IF_NULL_LOG_ERROR_AND_RETURN_NULL(this->InputUserSettingsRef, TEXT("Input Controller Component"), TEXT("Cannot find input user settings ref!"))
+
+	return this->InputUserSettingsRef;
+}
+
+void UInputControllerComponent::ToggleKeyBindingMode(bool ToggleOn) {
+	if (ToggleOn && !this->GetUserInputSettings()->IsMappingContextRegistered(this->GameInputMap)) {
+		this->GetUserInputSettings()->RegisterInputMappingContext(this->GameInputMap);
+	}
+	else if (!ToggleOn && this->GetUserInputSettings()->IsMappingContextRegistered(this->GameInputMap)) {
+		this->GetUserInputSettings()->UnregisterInputMappingContext(this->GameInputMap);
+	}
+}
+
+void UInputControllerComponent::OnControllerPossessedPawnChanged(APawn* OldPawn, APawn* NewPawn) {
+	// reset just in case new pawn doesn't possess these
+	this->InputUserSettingsRef = NULL;
+	this->InputSubsystemRef = NULL;
+	
+	if (!NewPawn) {
+		this->ControllerHasPossessedPlayer = false;
+		return;
+	}
+
+	this->ControllerHasPossessedPlayer = true;
+	this->InitForNewPawn();
 }

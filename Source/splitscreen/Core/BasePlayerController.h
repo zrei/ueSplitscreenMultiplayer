@@ -28,6 +28,4 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UInputControllerComponent> InputController;
-
-	void OnPossess(APawn* aPawn) override;
 };

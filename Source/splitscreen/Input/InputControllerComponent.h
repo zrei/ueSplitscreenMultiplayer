@@ -22,11 +22,13 @@ class SPLITSCREEN_API UInputControllerComponent : public UBaseActorComponent, pu
 	GENERATED_BODY()
 
 public:
+	UInputControllerComponent();
+
 	void SwitchToUIInput(UWidget* InWidgetToFocus, EMouseLockMode InMouseLockMode = EMouseLockMode::DoNotLock) override;
 
 	void SwitchToGameInput() override;
 
-	void Init();
+	void ToggleKeyBindingMode(bool ToggleOn);
 
 protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
@@ -43,10 +45,18 @@ private:
 
 	void SwitchToUIInputMap();
 
+	UEnhancedInputUserSettings* GetUserInputSettings();
+
+	void OnControllerPossessedPawnChanged(APawn* OldPawn, APawn* NewPawn);
+
+	void InitForNewPawn();
+
 private:
 	TObjectPtr<APlayerController> ControllerRef;
 
 	TObjectPtr<UEnhancedInputLocalPlayerSubsystem> InputSubsystemRef;
 
 	TObjectPtr<UEnhancedInputUserSettings> InputUserSettingsRef;
+
+	bool ControllerHasPossessedPlayer;
 };
