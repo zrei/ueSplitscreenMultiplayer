@@ -22,11 +22,11 @@ class SPLITSCREEN_API UInputControllerComponent : public UBaseActorComponent, pu
 	GENERATED_BODY()
 
 public:
-	UInputControllerComponent();
-
 	void SwitchToUIInput(UWidget* InWidgetToFocus, EMouseLockMode InMouseLockMode = EMouseLockMode::DoNotLock) override;
 
 	void SwitchToGameInput() override;
+
+	void Init();
 
 protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)

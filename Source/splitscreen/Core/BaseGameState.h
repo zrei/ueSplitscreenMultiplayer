@@ -7,6 +7,7 @@
 #include "Component Ledger/CoreInterface.h"
 #include "BaseGameState.generated.h"
 
+class UGameStateStoreComponent;
 /**
  * 
  */
@@ -23,4 +24,7 @@ protected:
 	TObjectPtr<UComponentLedger> ComponentLedger;
 
 	UComponentLedger* GetComponentLedger() override;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UGameStateStoreComponent> GameStateStore;
 };

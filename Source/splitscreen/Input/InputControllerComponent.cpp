@@ -9,7 +9,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "UserSettings/EnhancedInputUserSettings.h"
 
-UInputControllerComponent::UInputControllerComponent() {
+void UInputControllerComponent::Init() {
 	AActor* Owner = this->GetOwner();
 
 	if (!Owner)
@@ -21,19 +21,29 @@ UInputControllerComponent::UInputControllerComponent() {
 		LOG_ERROR_AND_RETURN_VOID(TEXT("Input Controller Component"), TEXT("Cannot find controller ref!"));
 	}
 
+	ULocalPlayer* LocalPlayer = ControllerRef->GetLocalPlayer();
+
+	if (!LocalPlayer) {
+		LOG_ERROR_AND_RETURN_VOID(TEXT("Input Controller Component"), TEXT("Cannot find local player!"));
+	}
+
 	InputSubsystemRef = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(ControllerRef->GetLocalPlayer());
 
 	if (!InputSubsystemRef) {
 		LOG_ERROR_AND_RETURN_VOID(TEXT("Input Controller Component"), TEXT("Cannot find input subsystem ref!"));
 	}
 
+	/*
 	InputUserSettingsRef = InputSubsystemRef->GetUserSettings();
 
 	if (!InputUserSettingsRef) {
 		LOG_ERROR_AND_RETURN_VOID(TEXT("Input Controller Component"), TEXT("Cannot find input user settings ref!"));
 	}
+	*/
 
-	InputUserSettingsRef->RegisterInputMappingContext(GameInputMap);
+	//InputUserSettingsRef->RegisterInputMappingContext(GameInputMap);
+
+	SwitchToGameInput();
 }
 
 void UInputControllerComponent::SwitchToUIInput(UWidget* InWidgetToFocus, EMouseLockMode InMouseLockMode) {

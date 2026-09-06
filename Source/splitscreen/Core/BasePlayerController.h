@@ -7,6 +7,8 @@
 #include "Component Ledger/CoreInterface.h"
 #include "BasePlayerController.generated.h"
 
+class UInputControllerComponent;
+
 /**
  * 
  */
@@ -23,5 +25,9 @@ protected:
 	TObjectPtr<UComponentLedger> ComponentLedger;
 
 	UComponentLedger* GetComponentLedger() override;
-	
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<UInputControllerComponent> InputController;
+
+	void OnPossess(APawn* aPawn) override;
 };

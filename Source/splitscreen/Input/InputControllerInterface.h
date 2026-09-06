@@ -9,7 +9,7 @@
 class UWidget;
 
 // This class does not need to be modified.
-UINTERFACE(MinimalAPI)
+UINTERFACE(MinimalAPI, NotBlueprintable)
 class UInputControllerInterface : public UInterface
 {
 	GENERATED_BODY()
@@ -24,7 +24,9 @@ class SPLITSCREEN_API IInputControllerInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+	UFUNCTION(BlueprintCallable)
 	virtual void SwitchToUIInput(UWidget* InWidgetToFocus, EMouseLockMode InMouseLockMode) PURE_VIRTUAL(IInputControllerInterface::SwitchToUIInput, );
 
+	UFUNCTION(BlueprintCallable)
 	virtual void SwitchToGameInput() PURE_VIRTUAL(IInputControllerInterface::SwitchToGameInput, );
 };
