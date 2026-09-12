@@ -30,6 +30,8 @@ public:
 
 	void ToggleKeyBindingMode(bool ToggleOn);
 
+	void InitForNewPawn();
+
 protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TObjectPtr<UInputMappingContext> GameInputMap;
@@ -45,11 +47,7 @@ private:
 
 	void SwitchToUIInputMap();
 
-	UEnhancedInputUserSettings* GetUserInputSettings();
-
-	void OnControllerPossessedPawnChanged(APawn* OldPawn, APawn* NewPawn);
-
-	void InitForNewPawn();
+	UEnhancedInputUserSettings* GetUserInputSettings();	
 
 private:
 	TObjectPtr<APlayerController> ControllerRef;

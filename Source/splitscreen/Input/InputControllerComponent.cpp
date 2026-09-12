@@ -9,7 +9,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "UserSettings/EnhancedInputUserSettings.h"
 
-#define NO_POSSESSED_PAWN_RETURN if (!this->ControllerHasPossessedPlayer) { ULogger::LogErrorToScreen(TEXT("Controller does not have possessed pawn")); return; }
+#define NO_POSSESSED_PAWN_RETURN(ret) if (!this->ControllerHasPossessedPlayer) { ULogger::LogErrorToScreen(TEXT("Controller does not have possessed pawn")); return ret; }
 
 UInputControllerComponent::UInputControllerComponent() {
 	AActor* Owner = this->GetOwner();
@@ -20,12 +20,12 @@ UInputControllerComponent::UInputControllerComponent() {
 	ControllerRef = Cast<APlayerController>(Owner);
 
 	CHECK_POINTER_IF_NULL_LOG_ERRROR_AND_RETURN_VOID(this->ControllerRef, TEXT("Input Controller Component"), TEXT("Cannot find controller ref!"))
-
-	ControllerRef->OnPossessedPawnChanged.AddDynamic(this, &UInputControllerComponent::OnControllerPossessedPawnChanged);
 }
 
 void UInputControllerComponent::InitForNewPawn() {
 	ULocalPlayer* LocalPlayer = ControllerRef->GetLocalPlayer();
+
+	this->ControllerHasPossessedPlayer = LocalPlayer != NULL;
 
 	CHECK_POINTER_IF_NULL_LOG_ERRROR_AND_RETURN_VOID(LocalPlayer, TEXT("Input Controller Component"), TEXT("Cannot find local player!"))
 
@@ -37,7 +37,7 @@ void UInputControllerComponent::InitForNewPawn() {
 }
 
 void UInputControllerComponent::SwitchToUIInput(UWidget* InWidgetToFocus, EMouseLockMode InMouseLockMode) {
-	NO_POSSESSED_PAWN_RETURN
+	NO_POSSESSED_PAWN_RETURN()
 
 	FInputModeUIOnly InputMode;
 	InputMode.SetLockMouseToViewportBehavior(InMouseLockMode);
@@ -54,7 +54,7 @@ void UInputControllerComponent::SwitchToUIInput(UWidget* InWidgetToFocus, EMouse
 }
 
 void UInputControllerComponent::SwitchToGameInput() {
-	NO_POSSESSED_PAWN_RETURN
+	NO_POSSESSED_PAWN_RETURN()
 
 	FInputModeGameOnly InputMode;
 	ControllerRef->SetInputMode(InputMode);
@@ -80,7 +80,7 @@ void UInputControllerComponent::SwitchToGameInputMap() {
 }
 
 UEnhancedInputUserSettings* UInputControllerComponent::GetUserInputSettings() {
-	NO_POSSESSED_PAWN_RETURN
+	NO_POSSESSED_PAWN_RETURN(NULL)
 
 	if (this->InputUserSettingsRef)
 		return this->InputUserSettingsRef;
@@ -101,18 +101,4 @@ void UInputControllerComponent::ToggleKeyBindingMode(bool ToggleOn) {
 	else if (!ToggleOn && this->GetUserInputSettings()->IsMappingContextRegistered(this->GameInputMap)) {
 		this->GetUserInputSettings()->UnregisterInputMappingContext(this->GameInputMap);
 	}
-}
-
-void UInputControllerComponent::OnControllerPossessedPawnChanged(APawn* OldPawn, APawn* NewPawn) {
-	// reset just in case new pawn doesn't possess these
-	this->InputUserSettingsRef = NULL;
-	this->InputSubsystemRef = NULL;
-	
-	if (!NewPawn) {
-		this->ControllerHasPossessedPlayer = false;
-		return;
-	}
-
-	this->ControllerHasPossessedPlayer = true;
-	this->InitForNewPawn();
 }

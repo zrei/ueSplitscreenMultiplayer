@@ -12,3 +12,9 @@ ABasePlayerController::ABasePlayerController() {
 UComponentLedger* ABasePlayerController::GetComponentLedger() {
 	return this->ComponentLedger;
 }
+
+void ABasePlayerController::OnPossess(APawn* NewPawn) {
+	Super::OnPossess(NewPawn);
+
+	this->InputController->InitForNewPawn();
+}

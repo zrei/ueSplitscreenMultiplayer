@@ -20,6 +20,8 @@ class SPLITSCREEN_API ABasePlayerController : public APlayerController, public I
 public:
 	ABasePlayerController();
 
+	void OnPossess(APawn* NewPawn) override;
+
 protected:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UComponentLedger> ComponentLedger;
