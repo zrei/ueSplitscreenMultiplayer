@@ -152,9 +152,9 @@ protected:
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 	FKey ManualCloseKey;
 
-private:
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
 	TObjectPtr<UWidgetAnimation> DelayAnimation;
-
+private:
 	FName CurrDelayKey;
 
 	FWidgetAnimationHandle DelayAnimationHandle;
