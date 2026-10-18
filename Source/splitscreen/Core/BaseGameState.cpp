@@ -8,6 +8,7 @@
 ABaseGameState::ABaseGameState() {
 	this->ComponentLedger = this->CreateDefaultSubobject<UComponentLedger>(TEXT("Component Ledger"));
 	this->GameStateStore = this->CreateDefaultSubobject<UGameStateStoreComponent>(TEXT("Game State Store"));
+	this->UiSystemComponent = this->CreateDefaultSubobject<UUiSystemComponent>(TEXT("UI System Component"));
 }
 
 UComponentLedger* ABaseGameState::GetComponentLedger() {

@@ -13,21 +13,27 @@ UFocusableWidget::UFocusableWidget(const FObjectInitializer& ObjectInitializer) 
 }
 
 void UFocusableWidget::NativeOnWidgetOpen() {
-	// play open sound if it exists here
+	if (this->OpenSound)
+		UGameplayStatics::PlaySound2D(this, this->OpenSound);
+
 	this->OnWidgetOpen();
 
 	this->OnWidgetOpened.Broadcast();
 }
 
 void UFocusableWidget::NativeOnWidgetClose() {
-	// play close sound if it exists here
+	if (this->CloseSound)
+		UGameplayStatics::PlaySound2D(this, this->CloseSound);
+
 	this->OnWidgetClose();
 
 	this->OnWidgetClosed.Broadcast();
 }
 
 void UFocusableWidget::NativeOnWidgetReopened() {
-	// play reopen sound if it exists here
+	if (this->PlayOpenSoundOnReopen && this->OpenSound)
+		UGameplayStatics::PlaySound2D(this, this->OpenSound);
+
 	this->OnWidgetReopened();
 }
 

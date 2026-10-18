@@ -4,7 +4,7 @@
 #include "UiSystemComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
-#include "GameFramework/GameStateBase.h"
+#include "GameFramework/PlayerController.h"
 #include "Core/Component Ledger/CoreInterface.h"
 #include "Input/InputControllerInterface.h"
 #include "UI/Widget/Base/FocusableWidget.h"
@@ -32,9 +32,9 @@ void UUiSystemComponent::AddWidgetToEntireViewport(UUserWidget* Widget) {
 	this->OnWidgetOpened.Broadcast(Widget);
 
 	if (UiStack.Num() == 1) {
-		AGameStateBase* GameState = UGameplayStatics::GetGameState(GetWorld());
+		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 		IInputControllerInterface* InputController = NULL;
-		if (GameState && UCoreHelper::GetInterfaceComponentFromUObject(GameState, UInputControllerInterface::StaticClass(), InputController)) {
+		if (PlayerController && UCoreHelper::GetInterfaceComponentFromUObject(PlayerController, UInputControllerInterface::StaticClass(), InputController)) {
 			InputController->SwitchToUIInput(Widget, EMouseLockMode::DoNotLock);
 		}
 
@@ -70,9 +70,9 @@ void UUiSystemComponent::RemoveWidgetFromEntireViewport(UUserWidget* Widget) {
 	}
 	else {
 		// switch input back to game
-		AGameStateBase* GameState = UGameplayStatics::GetGameState(GetWorld());
+		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 		IInputControllerInterface* InputController = NULL;
-		if (GameState && UCoreHelper::GetInterfaceComponentFromUObject(GameState, UInputControllerInterface::StaticClass(), InputController)) {
+		if (PlayerController && UCoreHelper::GetInterfaceComponentFromUObject(PlayerController, UInputControllerInterface::StaticClass(), InputController)) {
 			InputController->SwitchToGameInput();
 		}
 
