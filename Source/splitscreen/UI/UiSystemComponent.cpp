@@ -7,15 +7,38 @@
 #include "GameFramework/GameStateBase.h"
 #include "Core/Component Ledger/CoreInterface.h"
 #include "Input/InputControllerInterface.h"
+#include "UI/Widget/Base/FocusableWidget.h"
 #include "Core/Component Ledger/CoreHelper.h"
+#include "Common/Macros/ErrorMacros.h"
 
 void UUiSystemComponent::AddWidgetToEntireViewport(UUserWidget* Widget) {
-	Widget->AddToViewport();
+	if (!this->IsUiStackEmpty()) {
+		UUserWidget* RemovedWidget = this->UiStack.Last();
+		UFocusableWidget* RemovedFocusableWidget = Cast<UFocusableWidget>(RemovedWidget);
+		if (RemovedFocusableWidget) {
+			RemovedFocusableWidget->NativeOnWidgetHide();
+		}
+		RemovedWidget->RemoveFromParent();
+	}
 
-	AGameStateBase* GameState = UGameplayStatics::GetGameState(GetWorld());
-	IInputControllerInterface* InputController = NULL;
-	if (GameState && UCoreHelper::GetInterfaceComponentFromUObject(GameState, UInputControllerInterface::StaticClass(), InputController)) {
-		InputController->SwitchToUIInput(Widget, EMouseLockMode::DoNotLock);
+	UFocusableWidget* FocusableWidget = Cast<UFocusableWidget>(Widget);
+	if (FocusableWidget) {
+		FocusableWidget->NativeOnWidgetOpen();
+	}
+	Widget->AddToViewport();
+	Widget->SetFocus();
+	UiStack.Push(Widget);
+
+	this->OnWidgetOpened.Broadcast(Widget);
+
+	if (UiStack.Num() == 1) {
+		AGameStateBase* GameState = UGameplayStatics::GetGameState(GetWorld());
+		IInputControllerInterface* InputController = NULL;
+		if (GameState && UCoreHelper::GetInterfaceComponentFromUObject(GameState, UInputControllerInterface::StaticClass(), InputController)) {
+			InputController->SwitchToUIInput(Widget, EMouseLockMode::DoNotLock);
+		}
+
+		this->OnUiStackFirstOpened.Broadcast();
 	}
 }
 
@@ -24,9 +47,51 @@ void UUiSystemComponent::AddWidgetToLocalPlayerScreen(UUserWidget* Widget, ULoca
 }
 
 void UUiSystemComponent::RemoveWidgetFromEntireViewport(UUserWidget* Widget) {
+	if (this->IsUiStackEmpty()) {
+		LOG_ERROR_AND_RETURN_VOID(TEXT("UI System"), TEXT("Ui stack is empty! Nothing to remove!"))
+	}
 
+	UUserWidget* WidgetToRemove = this->UiStack.Pop();
+	UFocusableWidget* FocusableWidgetToRemove = Cast<UFocusableWidget>(WidgetToRemove);
+	if (FocusableWidgetToRemove) {
+		FocusableWidgetToRemove->NativeOnWidgetClose();
+	}
+	WidgetToRemove->RemoveFromParent();
+	this->OnWidgetClosed.Broadcast(WidgetToRemove);
+	
+	if (!this->IsUiStackEmpty()) {
+		UUserWidget* WidgetToReopen = this->UiStack.Last();
+		UFocusableWidget* FocusableWidgetToReopen = Cast<UFocusableWidget>(WidgetToReopen);
+		if (FocusableWidgetToReopen) {
+			FocusableWidgetToReopen->NativeOnWidgetReopened();
+		}
+		WidgetToReopen->AddToViewport();
+		WidgetToReopen->SetFocus();
+	}
+	else {
+		// switch input back to game
+		AGameStateBase* GameState = UGameplayStatics::GetGameState(GetWorld());
+		IInputControllerInterface* InputController = NULL;
+		if (GameState && UCoreHelper::GetInterfaceComponentFromUObject(GameState, UInputControllerInterface::StaticClass(), InputController)) {
+			InputController->SwitchToGameInput();
+		}
+
+		this->OnUiStackFullyClosed.Broadcast();
+	}
 }
 
 void UUiSystemComponent::RemoveWidgetFromLocalPlayerScreen(UUserWidget* Widget, ULocalPlayer* LocalPlayer) {
 
+}
+
+bool UUiSystemComponent::IsUiStackEmpty() {
+	return this->UiStack.IsEmpty();
+}
+
+bool UUiSystemComponent::IsIgnoredInputKey(FKey Key) {
+	return this->IgnoredInputKeys.Contains(Key);
+}
+
+void UUiSystemComponent::OnKeyPressed(FKey Key) {
+	this->OnUiKeyPressed.Broadcast(Key);
 }

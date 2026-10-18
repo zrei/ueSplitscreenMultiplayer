@@ -32,4 +32,8 @@ public:
 	virtual void RemoveWidgetFromEntireViewport(UUserWidget* Widget) PURE_VIRTUAL(IUiSystemInterface::RemoveWidgetFromEntireViewport,);
 
 	virtual void RemoveWidgetFromLocalPlayerScreen(UUserWidget* Widget, ULocalPlayer* LocalPlayer) PURE_VIRTUAL(IUiSystemInterface::RemoveWidgetFromLocalPlayerScreen,);
+
+	virtual bool IsIgnoredInputKey(FKey Key) PURE_VIRTUAL(IUiSystemInterface::IsIgnoredInputKey, return false;);
+
+	virtual void OnKeyPressed(FKey Key) PURE_VIRTUAL(IUiSystemInterface::OnKeyPressed, );
 };
