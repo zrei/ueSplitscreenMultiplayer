@@ -17,7 +17,7 @@ class SPLITSCREEN_API UCoreHelper : public UBlueprintFunctionLibrary
 
 public:
 	template <typename T>
-	static bool GetInterfaceComponentFromUObject(UObject* Obj, TSubclassOf<UInterface> InterfaceType, T* InterfacePtr) {
+	static bool GetInterfaceComponentFromUObject(UObject* Obj, TSubclassOf<UInterface> InterfaceType, T*& InterfacePtr) {
 		if (Obj && Obj->Implements<UCoreInterface>()) {
 			UActorComponent* ActorComponent = NULL;
 			if (Cast<ICoreInterface>(Obj)->TryGetComponentFromLedgerByInterface(InterfaceType, ActorComponent)) {

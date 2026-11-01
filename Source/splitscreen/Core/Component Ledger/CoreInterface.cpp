@@ -3,7 +3,7 @@
 
 #include "CoreInterface.h"
 
-bool ICoreInterface::TryGetComponentFromLedgerByClass(const TSubclassOf<UActorComponent> ComponentClass, UActorComponent* ComponentPtr) {
+bool ICoreInterface::TryGetComponentFromLedgerByClass(const TSubclassOf<UActorComponent> ComponentClass, UActorComponent*& ComponentPtr) {
 	UComponentLedger* ComponentLedger = this->GetComponentLedger();
 
 	if (!ComponentLedger) {
@@ -14,7 +14,7 @@ bool ICoreInterface::TryGetComponentFromLedgerByClass(const TSubclassOf<UActorCo
 	return ComponentLedger->TryGetComponentByClass(ComponentClass, ComponentPtr);
 }
 
-bool ICoreInterface::TryGetComponentFromLedgerByInterface(const TSubclassOf<UInterface> ComponentInterface, UActorComponent* ComponentPtr) {
+bool ICoreInterface::TryGetComponentFromLedgerByInterface(const TSubclassOf<UInterface> ComponentInterface, UActorComponent*& ComponentPtr) {
 	UComponentLedger* ComponentLedger = this->GetComponentLedger();
 
 	if (!ComponentLedger) {
@@ -25,7 +25,7 @@ bool ICoreInterface::TryGetComponentFromLedgerByInterface(const TSubclassOf<UInt
 	return ComponentLedger->TryGetComponentByInterface(ComponentInterface, ComponentPtr);
 }
 
-bool ICoreInterface::TryGetComponentFromLedgerByName(const FName& ComponentName, UActorComponent* ComponentPtr) {
+bool ICoreInterface::TryGetComponentFromLedgerByName(const FName& ComponentName, UActorComponent*& ComponentPtr) {
 	UComponentLedger* ComponentLedger = this->GetComponentLedger();
 
 	if (!ComponentLedger) {

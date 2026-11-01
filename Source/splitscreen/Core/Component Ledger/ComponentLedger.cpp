@@ -15,7 +15,7 @@ UActorComponent* UComponentLedger::GetComponentByClass(const TSubclassOf<UActorC
 	return FoundActorComponent;
 }
 
-bool UComponentLedger::TryGetComponentByClass(const TSubclassOf<UActorComponent> ComponentClass, UActorComponent* ComponentPtr) {
+bool UComponentLedger::TryGetComponentByClass(const TSubclassOf<UActorComponent> ComponentClass, UActorComponent*& ComponentPtr) {
 	ComponentPtr = this->GetComponentByClass(ComponentClass);
 	return ComponentPtr != NULL;
 }
@@ -26,13 +26,13 @@ UActorComponent* UComponentLedger::GetComponentByInterface(TSubclassOf<UInterfac
 
 	UActorComponent* FoundActorComponent = this->GetOwner()->FindComponentByInterface(ComponentInterface);
 
-	if (FoundActorComponent)
-		this->InterfaceComponentLedger.Add(ComponentInterface, FoundActorComponent);
+	//if (FoundActorComponent)
+	//	this->InterfaceComponentLedger.Add(ComponentInterface, FoundActorComponent);
 
 	return FoundActorComponent;
 }
 
-bool UComponentLedger::TryGetComponentByInterface(const TSubclassOf<UInterface> ComponentInterface, UActorComponent* ComponentPtr) {
+bool UComponentLedger::TryGetComponentByInterface(const TSubclassOf<UInterface> ComponentInterface, UActorComponent*& ComponentPtr) {
 	ComponentPtr = this->GetComponentByInterface(ComponentInterface);
 	return ComponentPtr != NULL;
 }
@@ -49,7 +49,7 @@ UActorComponent* UComponentLedger::GetComponentByName(const FName& ComponentName
 	return FoundActorComponent;
 }
 
-bool UComponentLedger::TryGetComponentByName(const FName& ComponentName, UActorComponent* ComponentPtr) {
+bool UComponentLedger::TryGetComponentByName(const FName& ComponentName, UActorComponent*& ComponentPtr) {
 	ComponentPtr = this->GetComponentByName(ComponentName);
 	return ComponentPtr != NULL;
 }

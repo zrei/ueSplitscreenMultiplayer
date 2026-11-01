@@ -23,11 +23,11 @@ class SPLITSCREEN_API ICoreInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual bool TryGetComponentFromLedgerByInterface(const TSubclassOf<UInterface> ComponentInterface, UActorComponent* ComponentPtr); 
+	virtual bool TryGetComponentFromLedgerByInterface(const TSubclassOf<UInterface> ComponentInterface, UActorComponent*& ComponentPtr); 
 
-	virtual bool TryGetComponentFromLedgerByName(const FName& ComponentName, UActorComponent* ComponentPtr);
+	virtual bool TryGetComponentFromLedgerByName(const FName& ComponentName, UActorComponent*& ComponentPtr);
 
-	virtual bool TryGetComponentFromLedgerByClass(const TSubclassOf<UActorComponent> ComponentClass, UActorComponent* ComponentPtr);
+	virtual bool TryGetComponentFromLedgerByClass(const TSubclassOf<UActorComponent> ComponentClass, UActorComponent*& ComponentPtr);
 
 	virtual UComponentLedger* GetComponentLedger() PURE_VIRTUAL(ICoreInterface::GetComponentLedger, return NULL;);
 };

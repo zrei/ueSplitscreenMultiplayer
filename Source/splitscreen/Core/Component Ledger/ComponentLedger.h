@@ -24,7 +24,7 @@ private:
 	UActorComponent* GetComponentByInterface(const TSubclassOf<UInterface> ComponentInterface);
 
 public:
-	bool TryGetComponentByName(const FName& ComponentName, UActorComponent* ComponentPtr);
-	bool TryGetComponentByClass(const TSubclassOf<UActorComponent> ComponentClass, UActorComponent* ComponentPtr);
-	bool TryGetComponentByInterface(const TSubclassOf<UInterface> ComponentInterface, UActorComponent* ComponentPtr);
+	bool TryGetComponentByName(const FName& ComponentName, UActorComponent*& ComponentPtr);
+	bool TryGetComponentByClass(const TSubclassOf<UActorComponent> ComponentClass, UActorComponent*& ComponentPtr);
+	bool TryGetComponentByInterface(const TSubclassOf<UInterface> ComponentInterface, UActorComponent*& ComponentPtr);
 };
