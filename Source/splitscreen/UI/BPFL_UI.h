@@ -6,6 +6,10 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "BPFL_UI.generated.h"
 
+class UUserWidget;
+class AGameStateBase;
+class IUiSystemInterface;
+
 /**
  * 
  */
@@ -16,8 +20,20 @@ class SPLITSCREEN_API UBPFL_UI : public UBlueprintFunctionLibrary
 	
 public:
 	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContext"))
-	static void OpenUiInViewport(const UObject* WorldContext, UUserWidget* Widget);
+	static void OpenUiInFullscreenViewport(const UObject* WorldContext, UUserWidget* Widget, bool HideOthers = false);
 
 	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContext"))
-	static void RemoveUiFromViewport(const UObject* WorldContext, UUserWidget* Widget);
+	static bool RemoveUiFromFullscreenViewport(const UObject* WorldContext, UUserWidget* Widget);
+
+	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContext"))
+	static bool PopTopWidgetFromFullscreenViewport(const UObject* WorldContext);
+
+	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContext"))
+	static bool IsFullscreenWidgetStackEmpty(const UObject* WorldContext);
+
+	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContext"))
+	static bool IsWidgetInFullscreenStack(const UObject* WorldContext, UUserWidget* Widget);
+
+private:
+	static IUiSystemInterface* GetUiControllerPointer(const UObject* WorldContext);
 };

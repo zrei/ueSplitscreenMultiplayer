@@ -7,6 +7,7 @@
 #include "GameFramework/GameStateBase.h"
 #include "Common/Logger.h"
 #include "Core/Component Ledger/CoreHelper.h"
+#include "UI/BPFL_UI.h"
 
 UFocusableWidget::UFocusableWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {
 	bIsFocusable = true;
@@ -176,11 +177,7 @@ void UFocusableWidget::NativeOnDelayCompleteEvent(FName Key) {
 }
 
 void UFocusableWidget::CloseWidget() {
-	AGameStateBase* GameState = UGameplayStatics::GetGameState(GetWorld());
-	IUiSystemInterface* UiController = NULL;
-	if (GameState && UCoreHelper::GetInterfaceComponentFromUObject(GameState, UUiSystemInterface::StaticClass(), UiController)) {
-		UiController->RemoveWidgetFromEntireViewport(this);
-	}
+	UBPFL_UI::RemoveUiFromFullscreenViewport(this, this);
 }
 
 void UFocusableWidget::NativeOnSwitchToKBM() {

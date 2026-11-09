@@ -7,27 +7,58 @@
 #include "Core/Component Ledger/CoreHelper.h"
 #include "Common/Logger.h"
 
-void UBPFL_UI::OpenUiInViewport(const UObject* WorldContext, UUserWidget* Widget) {
-	AGameStateBase* GameState = UGameplayStatics::GetGameState(WorldContext->GetWorld());
-	IUiSystemInterface* UiController = NULL;
-	if (GameState && UCoreHelper::GetInterfaceComponentFromUObject(GameState, UUiSystemInterface::StaticClass(), UiController)) {
-		UiController->AddWidgetToEntireViewport(Widget);
+void UBPFL_UI::OpenUiInFullscreenViewport(const UObject* WorldContext, UUserWidget* Widget, bool HideOthers) {
+	IUiSystemInterface* UiController = GetUiControllerPointer(WorldContext);
+	if (!UiController) {
+		return;
 	}
-	else if (!GameState) {
-		ULogger::LogErrorToScreen(TEXT("CANNOT FIND GAMESTATE"));
-	}
-	else {
-		ULogger::LogErrorToScreen(TEXT("CANNOT OPEN WIDGET"));
-	}
+
+	UiController->AddWidgetToViewport(Widget, HideOthers);
 }
 
-void UBPFL_UI::RemoveUiFromViewport(const UObject* WorldContext, UUserWidget* Widget) {
+bool UBPFL_UI::RemoveUiFromFullscreenViewport(const UObject* WorldContext, UUserWidget* Widget) {
+	IUiSystemInterface* UiController = GetUiControllerPointer(WorldContext);
+	if (UiController && UiController->RemoveWidgetFromViewport(Widget)) {
+		return true;
+	}
+
+	return false;
+}
+
+bool UBPFL_UI::PopTopWidgetFromFullscreenViewport(const UObject* WorldContext) {
+	IUiSystemInterface* UiController = GetUiControllerPointer(WorldContext);
+	if (UiController && UiController->PopTopWidgetFromViewport()) {
+		return true;
+	}
+
+	return false;
+}
+
+bool UBPFL_UI::IsFullscreenWidgetStackEmpty(const UObject* WorldContext) {
+	IUiSystemInterface* UiController = GetUiControllerPointer(WorldContext);
+	if (!UiController) {
+		return false;
+	}
+
+	return UiController->IsUiStackEmpty();
+}
+
+bool UBPFL_UI::IsWidgetInFullscreenStack(const UObject* WorldContext, UUserWidget* Widget) {
+	IUiSystemInterface* UiController = GetUiControllerPointer(WorldContext);
+	if (!UiController) {
+		return false;
+	}
+
+	return UiController->IsWidgetInStack(Widget);
+}
+
+IUiSystemInterface* UBPFL_UI::GetUiControllerPointer(const UObject* WorldContext) {
 	AGameStateBase* GameState = UGameplayStatics::GetGameState(WorldContext->GetWorld());
 	IUiSystemInterface* UiController = NULL;
 	if (GameState && UCoreHelper::GetInterfaceComponentFromUObject(GameState, UUiSystemInterface::StaticClass(), UiController)) {
-		UiController->RemoveWidgetFromEntireViewport(Widget);
+		return UiController;
 	}
-	else {
-		ULogger::LogErrorToScreen(TEXT("CANNOT CLOSE WIDGET"));
-	}
+
+	ULogger::LogErrorToScreen("Cannot find Ui controller");
+	return NULL;
 }

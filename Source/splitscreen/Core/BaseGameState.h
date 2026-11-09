@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameState.h"
 #include "Component Ledger/CoreInterface.h"
-#include "UI/UiSystemComponent.h"
+#include "UI/FullscreenUiSystemComponent.h"
 #include "BaseGameState.generated.h"
 
 class UGameStateStoreComponent;
@@ -30,5 +30,5 @@ protected:
 	TObjectPtr<UGameStateStoreComponent> GameStateStore;
 
 	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UUiSystemComponent> UiSystemComponent;
+	TObjectPtr<UFullscreenUiSystemComponent> FullscreenUiSystemComponent;
 };

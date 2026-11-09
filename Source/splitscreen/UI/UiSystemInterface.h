@@ -10,7 +10,7 @@ class UUserWidget;
 class ULocalPlayer;
 
 // This class does not need to be modified.
-UINTERFACE(MinimalAPI)
+UINTERFACE(MinimalAPI, NotBlueprintable)
 class UUiSystemInterface : public UInterface
 {
 	GENERATED_BODY()
@@ -25,13 +25,17 @@ class SPLITSCREEN_API IUiSystemInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual void AddWidgetToEntireViewport(UUserWidget* Widget) PURE_VIRTUAL(IUiSystemInterface::AddWidgetToEntireViewport,);
+	virtual void AddWidgetToViewport(UUserWidget* Widget, bool HideOthers) PURE_VIRTUAL(IUiSystemInterface::AddWidgetToViewport,);
 
-	virtual void AddWidgetToLocalPlayerScreen(UUserWidget* Widget, ULocalPlayer* LocalPlayer) PURE_VIRTUAL(IUiSystemInterface::AddWidgetToLocalPlayerScreen,);
+	virtual bool RemoveWidgetFromViewport(UUserWidget* Widget) PURE_VIRTUAL(IUiSystemInterface::RemoveWidgetFromViewport, return false;);
 
-	virtual void RemoveWidgetFromEntireViewport(UUserWidget* Widget) PURE_VIRTUAL(IUiSystemInterface::RemoveWidgetFromEntireViewport,);
+	virtual bool PopTopWidgetFromViewport() PURE_VIRTUAL(IUiSystemInterface::PopTopWidgetFromViewport, return false;);
 
-	virtual void RemoveWidgetFromLocalPlayerScreen(UUserWidget* Widget, ULocalPlayer* LocalPlayer) PURE_VIRTUAL(IUiSystemInterface::RemoveWidgetFromLocalPlayerScreen,);
+	virtual bool IsUiStackEmpty() PURE_VIRTUAL(IUiSystemInterface::IsStackEmpty, return false;);
+
+	virtual int GetWidgetStackIndex(UUserWidget* Widget) PURE_VIRTUAL(IUiSystemInterface::GetWidgetStackIndex, return -1;);
+
+	virtual bool IsWidgetInStack(UUserWidget* Widget) PURE_VIRTUAL(IUiSystemInterface::IsWidgetInStacl, return false;);
 
 	virtual bool IsIgnoredInputKey(FKey Key) PURE_VIRTUAL(IUiSystemInterface::IsIgnoredInputKey, return false;);
 

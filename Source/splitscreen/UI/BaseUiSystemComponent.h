@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Core/BaseActorComponent.h"
 #include "UiSystemInterface.h"
-#include "UiSystemComponent.generated.h"
+#include "BaseUiSystemComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUserWidgetEvent, UUserWidget*, Widget);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUiSystemEvent);
@@ -14,27 +14,33 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUiKeyEvent, FKey, Key);
 /**
  * 
  */
-UCLASS()
-class SPLITSCREEN_API UUiSystemComponent : public UBaseActorComponent, public IUiSystemInterface
+UCLASS(Abstract)
+class SPLITSCREEN_API UBaseUiSystemComponent : public UBaseActorComponent, public IUiSystemInterface
 {
 	GENERATED_BODY()
 	
 public:
-	void AddWidgetToEntireViewport(UUserWidget* Widget) override;
+	void AddWidgetToViewport(UUserWidget* Widget, bool HideOthers) override;
 
-	void AddWidgetToLocalPlayerScreen(UUserWidget* Widget, ULocalPlayer* LocalPlayer) override;
+	bool RemoveWidgetFromViewport(UUserWidget* Widget) override;
+	
+	bool PopTopWidgetFromViewport() override;
+	
+	bool IsUiStackEmpty() override;
+	
+	int GetWidgetStackIndex(UUserWidget* Widget) override;
 
-	void RemoveWidgetFromEntireViewport(UUserWidget* Widget) override;
-
-	void RemoveWidgetFromLocalPlayerScreen(UUserWidget* Widget, ULocalPlayer* LocalPlayer) override;
+	bool IsWidgetInStack(UUserWidget* Widget) override;
 
 	bool IsIgnoredInputKey(FKey Key) override;
 
 	void OnKeyPressed(FKey Key) override;
 
-public:
-	UFUNCTION(BlueprintCallable)
-	bool IsUiStackEmpty();
+protected:
+	virtual void Internal_AddWidgetToViewport(UUserWidget* Widget) PURE_VIRTUAL(UBaseuiSystemComponent::Internal_AddWidgetToViewport, );
+
+private:
+	void Internal_RemoveWidgetFromViewport(UUserWidget* WidgetToRemove, bool IsTopLayer);
 
 public:
 	UPROPERTY(BlueprintAssignable)
@@ -58,4 +64,7 @@ protected:
 
 private:
 	TArray<UUserWidget*> UiStack{};
+
+	// will always be the lowest layer. all widgets will be added and removed from the canvas here
+	UUserWidget* HudLayer;
 };
